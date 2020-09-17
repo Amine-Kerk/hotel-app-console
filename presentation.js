@@ -2,52 +2,76 @@
 //recupérer la saisie 
 //afficher le resultat dans la console (le menu le resultat...)
 var service = require('./service');
+var readline = require('readline');
 
-function start(){
-    //afficher le menu
-    console.log('1.lister les clients \n2.Ajouter un nouveau Client\n3.Rechercher un client par Nom\n4.Vérifier la disponibilité dune chambre\n 99.Sortir');
-   //le comportement après l’affichage du menu
-    var readline = require('readline');
-    var rl = readline.createInterface({
-        input: process.stdin,
-        output: process.stdout
-        });
-    rl.question('saisissez la commande à effectuer  : ', function(saisie) {
+// création d'un objet `rep` permettant de récupérer la saisie utilisateur
+var r1 = readline.createInterface({
+    input: process.stdin,
+    output: process.stdout
+});
 
 
-        if (saisie == '1'){
-            console.log('>> Liste des clients');
-            console.log(service.listerClients());
-            rl.close();
+function start() {
+
+    console.log("Menu");
+    console.log("1. Lister les clients");
+    console.log("2. Ajouter un client");
+    console.log("3. Recherche un client par nom");
+    console.log("4. Vérifier la disponibilité d'une chambre");
+    console.log("99. Sortir");
+
+
+    r1.question('Votre choix :', function (saisie) {
+
+        switch (saisie) {
+            case "1":
+                service.listerClients(
+                    function (listerClients) {
+                        console.log(
+                            listerClients
+                                .map(function (client) {
+                                    return client.nom + ' ' + client.prenoms
+                                })
+                                .join('\n')
+                        );
+                        start();
+                    }, function (err) {
+                        console.log('oops');
+                        start();
+                    });
+                break;
+
+            case "2":
+                service.ajouterClients(
+                    function (ajouterClients) {
+                        console.log(
+                            ajouterClients
+                                .map(function (client) {
+                                    return client.nom + ' ' + client.prenoms
+                                })
+                                .join('\n')
+                        );
+                        start();
+                    }, function (err) {
+                        console.log('oops');
+                        start();
+                        r1.close
+                    });
+                break;
+            case "99":
+                console.log("Aurevoir.")
+                r1.close();
+                this.process.exit(); // Met fin au programme
+                break;
         }
-        if (saisie =='2'){
-            console.log('>> Ajouter un nouveau Client')
-            console.log(service.ajouterClients());
-            rl.close();
-        }
 
-        if (saisie =='3'){
-            console.log('>> Rechercher un client par Nom')
-            rl.close();
-        }
 
-        if (saisie =='3'){
-            console.log('>> Vérifier la disponibilité d\'une chambre')
-            rl.close();
-        }
-        
-        else if (saisie == '99') {
-            console.log('Au revoir');
-            rl.close();
-        } else {
-            console.log('la saisie est erronée veuillez recommencer');
-            rl.close();
-        }
-    })
+    }
+    );
 
-   
-    
 }
 
+exports.start = start;
 
-exports.demarrer=start;
+        
+        
