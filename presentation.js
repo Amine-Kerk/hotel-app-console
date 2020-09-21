@@ -1,77 +1,99 @@
-//couche IHM "" commuiquer avec UI ""
-//recupérer la saisie 
-//afficher le resultat dans la console (le menu le resultat...)
-var service = require('./service');
-var readline = require('readline');
+const readline = require('readline');
 
-// création d'un objet `rep` permettant de récupérer la saisie utilisateur
-var r1 = readline.createInterface({
+// création d'un objet `rl` permettant de récupérer la saisie utilisateur
+const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout
 });
 
-
-function start() {
-
-    console.log("Menu");
-    console.log("1. Lister les clients");
-    console.log("2. Ajouter un client");
-    console.log("3. Recherche un client par nom");
-    console.log("4. Vérifier la disponibilité d'une chambre");
-    console.log("99. Sortir");
+class Presentation {
 
 
-    r1.question('Votre choix :', function (saisie) {
-
-        switch (saisie) {
-            case "1":
-                service.listerClients(
-                    function (listerClients) {
-                        console.log(
-                            listerClients
-                                .map(function (client) {
-                                    return client.nom + ' ' + client.prenoms
-                                })
-                                .join('\n')
-                        );
-                        start();
-                    }, function (err) {
-                        console.log('oops');
-                        start();
-                    });
-                break;
-
-            case "2":
-                service.ajouterClients(
-                    function (ajouterClients) {
-                        console.log(
-                            ajouterClients
-                                .map(function (client) {
-                                    return client.nom + ' ' + client.prenoms
-                                })
-                                .join('\n')
-                        );
-                        start();
-                    }, function (err) {
-                        console.log('oops');
-                        start();
-                        r1.close
-                    });
-                break;
-            case "99":
-                console.log("Aurevoir.")
-                r1.close();
-                this.process.exit(); // Met fin au programme
-                break;
-        }
-
-
+    constructor(service) {
+        this.monService = service;
     }
-    );
+
+    start() {
+
+        console.log(
+            `** Administration Hotel **
+1. Lister les clients
+2. Ajouter un client
+3. Rechercher un client par nom
+4. Vérifier la disponibilité d'une chambre
+99. Sortir
+`);
+
+        // récupération de la saisie utilisateur
+        rl.question("Choisissez un numéro : ", saisie => {
+
+            switch (saisie) {
+                case "1":
+                    console.log("\n>> Liste des clients\n");
+
+                    this.monService.listerClient()
+                        .then(listClients => console.log(
+                            listClients
+                                .map(client => `${client.nom} ${client.prenoms}`)
+                                .join('\n')
+                        ))
+                        .catch(err => console.log(err))
+                        .finally(() => {
+                            console.log("\r");
+                            this.start();
+                        })
+
+                    break;
+
+                case "2":
+                    console.log("\n>> Ajouter un client\n");
+                    rl.question("Entrez un Nom : ", saisieNom => {
+                        rl.question("Entrez un Prenom : ", saisiePrenom => {
+                            this.monService.posterClient(saisieNom, saisiePrenom)
+                                .then(console.log(`${saisieNom} ${saisiePrenom} a été ajouté !`))
+                                .catch(err => console.log(err))
+                                .finally(() => {
+                                    console.log("\r");
+                                    this.start();
+                                })
+                        })
+                    })
+
+                    break;
+
+                case "3":
+                    console.log("\n>> Rechercher un client par nom\n");
+
+                    rl.question("Entrez le Nom à chercher: ", saisieNom => {
+                        this.monService.findByName(saisieNom)
+                            .then(clients => console.log(clients))
+                            .catch(err => console.log(err))
+                            .finally(() => {
+                                console.log("\r");
+                                this.start();
+                            })
+                    })
+                    break;
+
+                case "4":
+                    console.log("\n>> Vérifier la disponibilité d'une chambre\n");
+                    console.log("\nComing soon!\n");
+
+                    break;
+
+                case "99":
+                    console.log("\nAurevoir !");
+                    process.exit();
+
+                default:
+                    console.log("\nTU SAIS PAS LIRE? 1, 2, 3, 4 ou 99 ! Retry =>")
+                    this.start();
+                    break;
+            }
+        });
+    }
 
 }
 
-exports.start = start;
 
-        
-        
+module.exports = { Presentation };

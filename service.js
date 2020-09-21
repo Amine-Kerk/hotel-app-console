@@ -1,32 +1,29 @@
-var request = require('request');
-var backendUrl = 'https://amine-hotel-web-api.herokuapp.com'
+class Service {
 
-
-function listerClients(callbackOK, callbackKO) {
-request(backendUrl + '/clients?start=0&size=5', { json: true }, 
-function(err,r1, listerClients) {
-    if (err) {
-        callbackKO(err);
-    } else {
-        callbackOK(listerClients);
+    constructor() {
+        this.request = require('request-promise-native');
     }
-});
 
+    listerClient() {
+        return this.request.get('https://amine-hotel-web-api.herokuapp.com/clients?start=0&size=7', { json: true });
+    }
+
+    findByName(nomAChercher) {
+        return this.request.get(`https://hotel-web-api-spring.herokuapp.com/clients/nom=${nomAChercher}`, { json: true });
+    }
+
+    posterClient(saisieNom, saisiePrenom) {
+        return this.request.post({
+            url: 'https://hotel-web-api-spring.herokuapp.com/clients',
+            method: 'POST',
+            json: {
+                nom: saisieNom,
+                prenoms: saisiePrenom
+            }
+        });
+    }
 }
 
-exports.listerClients = listerClients;
+// exports.Service = Service;
 
-
-
-
-
-function ajouterClients() {
-request({url:backendUrl+'/clients',json:{nom:'san',prenoms :'lou'},method:'POST'},
-function (err,httpResponse,body){
-    if (err) {
-        return console.error('upload failed:',err);
-    }
-    console.log('upload successful',body);
-});
-}
-exports.ajouterClients=ajouterClients;
+module.exports = { Service };
