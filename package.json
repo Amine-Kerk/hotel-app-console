@@ -1,16 +1,31 @@
 {
-    "name": "hotel-app-console",
-    "version": "1.0.0",
-    "description": "",
-    "main": "index.js",
-    "scripts": {
-      "start": "node index.js"
-    },
-    "keywords": [],
-    "author": "",
-    "license": "ISC",
-    "dependencies": {
-      "request": "^2.88.2"
-    }
+  "name": "hotel-app-console",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Amine-Kerk/hotel-app-console"
+  },
+  "keywords": [],
+  "author": "@Amine Kerkoub",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Amine-Kerk/hotel-app-console/issues"
+  },
+  "homepage": "https://github.com/Amine-Kerk/hotel-app-console#readme",
+  "dependencies": {
+    "@types/jsdom": "^16.2.4",
+    "@types/node": "^14.11.1",
+    "@types/request-promise-native": "^1.0.17",
+    "request": "^2.88.2",
+    "request-promise-native": "^1.0.9",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.0.3"
   }
   
+}
